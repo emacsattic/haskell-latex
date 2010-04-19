@@ -5,7 +5,7 @@
 ;; Author: Dave Love <fx@gnu.org>
 ;; Keywords: languages, wp
 ;; Created: Sept 2003
-;; $Revision: 1.7 $
+;; $Revision: 1.8 $
 ;; URL: http://www.loveshack.ukfsn.org/emacs
 
 ;; This file is free software; you can redistribute it and/or modify
@@ -112,10 +112,12 @@ and START and END are the limits of the chunk."
 ;;;###autoload
 (defun haskell-latex-maybe ()
   "Invoke `haskell-latex-mode' unless the buffer appears to use Bird tracks.
+The criterion for Bird tracks is two consecutive lines with `>'
+in column 0.
 Suitable for adding to `haskell-mode-hook'."
   (if (save-excursion
 	(goto-char (point-min))
-	(not (re-search-forward "^>" nil t)))
+	(not (re-search-forward "\\(?:^>.*\n\\)\\{2\\}" nil t)))
       (let ((haskell-mode-hook haskell-mode-hook))
 	;; Don't recurse!
 	(remove-hook 'haskell-mode-hook 'haskell-latex-maybe)
@@ -128,7 +130,7 @@ Suitable for adding to `haskell-mode-hook'."
 (defun haskell-latex-mode ()
   "Mode for editing `literate Haskell' with LaTeX conventions."
   (interactive)
-  (set (make-local-variable 'multi-alist)
+  (set (make-local-variable 'multi-mode-alist)
        '((haskell-mode . haskell-latex-chunk-region)
 	 (latex-mode . nil)))
   (multi-mode-install-modes))
